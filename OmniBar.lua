@@ -1,5 +1,5 @@
 
--- OmniBar by Jordon
+-- DjuxBar by Jordon
 
 local addonName, addon = ...
 
@@ -64,8 +64,8 @@ local tinsert = tinsert
 local wipe = wipe
 local tContains = tContains
 
-OmniBar = LibStub("AceAddon-3.0"):NewAddon("OmniBar", "AceEvent-3.0", "AceComm-3.0", "AceSerializer-3.0")
-local L = LibStub("AceLocale-3.0"):GetLocale("OmniBar")
+DjuxBar = LibStub("AceAddon-3.0"):NewAddon("DjuxBar", "AceEvent-3.0", "AceComm-3.0", "AceSerializer-3.0")
+local L = LibStub("AceLocale-3.0"):GetLocale("DjuxBar")
 
 -- Apply cooldown adjustments
 for k,v in pairs(addon.Cooldowns) do
@@ -134,12 +134,12 @@ local MAX_DUPLICATE_ICONS = 5
 
 local BASE_ICON_SIZE = 36
 
-function OmniBar:Print(message)
-	DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99OmniBar|r: " .. message)
+function DjuxBar:Print(message)
+	DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99DjuxBar|r: " .. message)
 end
 
-function OmniBar:OnInitialize()
-	self.db = LibStub("AceDB-3.0"):New("OmniBarDB", {
+function DjuxBar:OnInitialize()
+	self.db = LibStub("AceDB-3.0"):New("DjuxBarDB", {
 		global = { version = DB_VERSION, cooldowns = {} },
 		profile = { bars = {} }
 	}, true)
@@ -153,7 +153,7 @@ function OmniBar:OnInitialize()
 	self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 	self:RegisterEvent("GROUP_ROSTER_UPDATE", "GetSpecs")
-	self:RegisterComm("OmniBarSpell", function(_, payload, _, sender)
+	self:RegisterComm("DjuxBarSpell", function(_, payload, _, sender)
 		if (not UnitExists(sender)) or sender == PLAYER_NAME then return end
 		local success, event, sourceGUID, sourceName, sourceFlags, spellID, serverTime = self:Deserialize(payload)
 		if (not success) then return end
@@ -175,7 +175,7 @@ function OmniBar:OnInitialize()
 	self.version.major = tonumber(self.version.major)
 	self.version.minor = tonumber(self.version.minor)
 
-	self:RegisterComm("OmniBarVersion", function(_, payload, _, sender)
+	self:RegisterComm("DjuxBarVersion", function(_, payload, _, sender)
 		self.sender = sender
 		if (not payload) or type(payload) ~= "string" then return end
 		local major, minor = payload:match("(%d+)%.(%d+)")
@@ -226,12 +226,12 @@ local function GetDefaultCommChannel()
 	end
 end
 
-function OmniBar:SendVersion(distribution)
+function DjuxBar:SendVersion(distribution)
 	if (not self.version) or self.version.dev then return end
-	self:SendCommMessage("OmniBarVersion", self.version.string, distribution or GetDefaultCommChannel())
+	self:SendCommMessage("DjuxBarVersion", self.version.string, distribution or GetDefaultCommChannel())
 end
 
-function OmniBar:OnEnable()
+function DjuxBar:OnEnable()
 	wipe(self.specs)
 
 	wipe(self.spellCasts)
@@ -250,7 +250,7 @@ function OmniBar:OnEnable()
 
 	-- Create a default bar if none exist
 	if self.index == 1 then
-		self:Initialize("OmniBar1", "OmniBar")
+		self:Initialize("DjuxBar1", "DjuxBar")
 		self.index = 2
 	end
 
@@ -261,7 +261,7 @@ function OmniBar:OnEnable()
 	self:Refresh(true)
 end
 
-function OmniBar:Decode(encoded)
+function DjuxBar:Decode(encoded)
 	local LibDeflate = LibStub:GetLibrary("LibDeflate")
 	local decoded = LibDeflate:DecodeForPrint(encoded)
 	if (not decoded) then return self:ImportError("DecodeForPrint") end
@@ -272,7 +272,7 @@ function OmniBar:Decode(encoded)
 	return deserialized
 end
 
-function OmniBar:ExportProfile()
+function DjuxBar:ExportProfile()
 	local LibDeflate = LibStub:GetLibrary("LibDeflate")
 	local data = {
 		profile = self.db.profile,
@@ -286,10 +286,10 @@ function OmniBar:ExportProfile()
 	return LibDeflate:EncodeForPrint(compressed)
 end
 
-function OmniBar:ImportError(message)
+function DjuxBar:ImportError(message)
 	if (not message) or self.import.editBox.editBox:GetNumLetters() == 0 then
 		self.import.statustext:SetTextColor(1, 0.82, 0)
-		self.import:SetStatusText(L["Paste a code to import an OmniBar profile."])
+		self.import:SetStatusText(L["Paste a code to import a DjuxBar profile."])
 	else
 		self.import.statustext:SetTextColor(1, 0, 0)
 		self.import:SetStatusText(L["Import failed (%s)"]:format(message))
@@ -297,7 +297,7 @@ function OmniBar:ImportError(message)
 	self.import.button:SetDisabled(true)
 end
 
-function OmniBar:ImportProfile(data)
+function DjuxBar:ImportProfile(data)
 	if (data.version ~= 1) then return self:ImportError(L["Invalid version"]) end
 
 	local profile = L["Imported (%s)"]:format(date())
@@ -312,11 +312,11 @@ function OmniBar:ImportProfile(data)
 	end
 
 	self:OnEnable()
-	LibStub("AceConfigRegistry-3.0"):NotifyChange("OmniBar")
+	LibStub("AceConfigRegistry-3.0"):NotifyChange("DjuxBar")
 	return true
 end
 
-function OmniBar:ShowExport()
+function DjuxBar:ShowExport()
 	self.export.editBox:SetText(self:ExportProfile())
 	self.export:Show()
 	self.export.editBox:SetFocus()
@@ -325,7 +325,7 @@ function OmniBar:ShowExport()
 
 end
 
-function OmniBar:ShowImport()
+function DjuxBar:ShowImport()
 	self.import.editBox:SetText("")
 	self:ImportError()
 	self.import:Show()
@@ -333,7 +333,7 @@ function OmniBar:ShowImport()
 	self.import.editBox:SetFocus()
 end
 
-function OmniBar:Delete(key, keepProfile)
+function DjuxBar:Delete(key, keepProfile)
 	local bar = _G[key]
 	if (not bar) then return end
 	bar:UnregisterEvent("PLAYER_ENTERING_WORLD")
@@ -354,12 +354,12 @@ function OmniBar:Delete(key, keepProfile)
 	bar:Hide()
 	if (not keepProfile) then self.db.profile.bars[key] = nil end
 	self.options.args.bars.args[key] = nil
-	LibStub("AceConfigRegistry-3.0"):NotifyChange("OmniBar")
+	LibStub("AceConfigRegistry-3.0"):NotifyChange("DjuxBar")
 end
 
-OmniBar.BackupCooldowns = {}
+DjuxBar.BackupCooldowns = {}
 
-function OmniBar:CopyCooldown(cooldown)
+function DjuxBar:CopyCooldown(cooldown)
 	local copy = {}
 
 	for _,v in pairs({"class", "charges", "parent", "name", "icon"}) do
@@ -398,7 +398,7 @@ if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
 	end
 end
 
-function OmniBar:AddCustomSpells()
+function DjuxBar:AddCustomSpells()
 	-- Restore any overrides
 	for k,v in pairs(self.BackupCooldowns) do
 		addon.Cooldowns[k] = self:CopyCooldown(v)
@@ -422,7 +422,7 @@ function OmniBar:AddCustomSpells()
 	end
 end
 
-local function OmniBar_IsAdaptive(self)
+local function DjuxBar_IsAdaptive(self)
 	if self.settings.adaptive then return true end
 
 	-- force adaptive in arena since enemies are finite and known
@@ -432,15 +432,15 @@ local function OmniBar_IsAdaptive(self)
 	if self.settings.trackUnit ~= "ENEMY" then return true end
 end
 
-function OmniBar_SpellCast(self, event, name, spellID)
+function DjuxBar_SpellCast(self, event, name, spellID)
 	if self.disabled then return end
 
 	-- if GetZonePVPInfo() == "sanctuary" then return end
 
-	OmniBar_AddIcon(self, self.spellCasts[name][spellID])
+	DjuxBar_AddIcon(self, self.spellCasts[name][spellID])
 end
 
-function OmniBar:Initialize(key, name)
+function DjuxBar:Initialize(key, name)
 	if (not self.db.profile.bars[key]) then
 		self.db.profile.bars[key] = { name = name }
 		for a,b in pairs(DEFAULTS) do
@@ -450,7 +450,7 @@ function OmniBar:Initialize(key, name)
 
 	self:AddCustomSpells()
 
-	local f = _G[key] or CreateFrame("Frame", key, UIParent, "OmniBarTemplate")
+	local f = _G[key] or CreateFrame("Frame", key, UIParent, "DjuxBarTemplate")
 	f:Show()
 	f.settings = self.db.profile.bars[key]
 	f.settings.align = f.settings.align or "CENTER"
@@ -478,7 +478,7 @@ function OmniBar:Initialize(key, name)
 		end
 	end
 
-	f.adaptive = OmniBar_IsAdaptive(f)
+	f.adaptive = DjuxBar_IsAdaptive(f)
 
 	-- Upgrade custom spells
 	for k,v in pairs(f.settings) do
@@ -499,26 +499,26 @@ function OmniBar:Initialize(key, name)
 	f.settings.noDefault = nil
 
 	-- Load the settings
-	OmniBar_LoadSettings(f)
+	DjuxBar_LoadSettings(f)
 
 	-- Create the icons
 	for spellID,_ in pairs(addon.Cooldowns) do
-		if OmniBar_IsSpellEnabled(f, spellID) then
-			OmniBar_CreateIcon(f)
+		if DjuxBar_IsSpellEnabled(f, spellID) then
+			DjuxBar_CreateIcon(f)
 		end
 	end
 
 	-- Create the duplicate icons
 	for i = 1, MAX_DUPLICATE_ICONS do
-		OmniBar_CreateIcon(f)
+		DjuxBar_CreateIcon(f)
 	end
 
-	OmniBar_ShowAnchor(f)
-	OmniBar_ResetIcons(f)
-	OmniBar_UpdateIcons(f)
-	OmniBar_Center(f)
+	DjuxBar_ShowAnchor(f)
+	DjuxBar_ResetIcons(f)
+	DjuxBar_UpdateIcons(f)
+	DjuxBar_Center(f)
 
-	f.OnEvent = OmniBar_OnEvent
+	f.OnEvent = DjuxBar_OnEvent
 
 	f:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
 	f:RegisterEvent("ZONE_CHANGED_NEW_AREA", "OnEvent")
@@ -542,12 +542,12 @@ function OmniBar:Initialize(key, name)
 	table.insert(self.bars, f)
 end
 
-function OmniBar:Create()
+function DjuxBar:Create()
 	while true do
-		local key = "OmniBar"..self.index
+		local key = "DjuxBar"..self.index
 		self.index = self.index + 1
 		if (not self.db.profile.bars[key]) then
-			self:Initialize(key, "OmniBar " .. (self.index - 1))
+			self:Initialize(key, "DjuxBar " .. (self.index - 1))
 			self:AddBarToOptions(key, true)
 			self:OnEnable()
 			return
@@ -555,22 +555,22 @@ function OmniBar:Create()
 	end
 end
 
-function OmniBar:Refresh(full)
+function DjuxBar:Refresh(full)
 	self:GetSpecs()
 	for key,_ in pairs(self.db.profile.bars) do
 		local f = _G[key]
 		if f then
 			f.container:SetScale(f.settings.size/BASE_ICON_SIZE)
 			if full then
-				f.adaptive = OmniBar_IsAdaptive(f)
-				OmniBar_OnEvent(f, "PLAYER_ENTERING_WORLD")
-				OmniBar_OnEvent(f, "PLAYER_TARGET_CHANGED")
-				OmniBar_OnEvent(f, "PLAYER_FOCUS_CHANGED")
-				OmniBar_OnEvent(f, "GROUP_ROSTER_UPDATE")
+				f.adaptive = DjuxBar_IsAdaptive(f)
+				DjuxBar_OnEvent(f, "PLAYER_ENTERING_WORLD")
+				DjuxBar_OnEvent(f, "PLAYER_TARGET_CHANGED")
+				DjuxBar_OnEvent(f, "PLAYER_FOCUS_CHANGED")
+				DjuxBar_OnEvent(f, "GROUP_ROSTER_UPDATE")
 			else
-				OmniBar_LoadPosition(f)
-				OmniBar_UpdateIcons(f)
-				OmniBar_Center(f)
+				DjuxBar_LoadPosition(f)
+				DjuxBar_UpdateIcons(f)
+				DjuxBar_Center(f)
 			end
 		end
 	end
@@ -599,7 +599,7 @@ local function UnitIsHostile(unit)
 	return UnitIsPlayer(unit) and reaction < 4 and (not UnitIsPossessed(unit))
 end
 
-function OmniBar_ShowAnchor(self)
+function DjuxBar_ShowAnchor(self)
 	if self.disabled or self.settings.locked or #self.active > 0 then
 		self.anchor:Hide()
 	else
@@ -609,12 +609,12 @@ function OmniBar_ShowAnchor(self)
 	end
 end
 
-function OmniBar_CreateIcon(self)
+function DjuxBar_CreateIcon(self)
 	if InCombatLockdown() then return end
 	self.numIcons = self.numIcons + 1
 	local name = self:GetName()
 	local key = name.."Icon"..self.numIcons
-	local f = _G[key] or CreateFrame("Button", key, _G[name.."Icons"], "OmniBarButtonTemplate")
+	local f = _G[key] or CreateFrame("Button", key, _G[name.."Icons"], "DjuxBarButtonTemplate")
 	table.insert(self.icons, f)
 end
 
@@ -626,12 +626,12 @@ local function SpellBelongsToSpec(spellID, specID)
 	end
 end
 
-function OmniBar_AddIconsByClass(self, class, sourceGUID, specID)
+function DjuxBar_AddIconsByClass(self, class, sourceGUID, specID)
 	for spellID, spell in pairs(addon.Cooldowns) do
-		if OmniBar_IsSpellEnabled(self, spellID) and
+		if DjuxBar_IsSpellEnabled(self, spellID) and
 			(spell.class == "GENERAL" or (spell.class == class and SpellBelongsToSpec(spellID, specID)))
 		then
-			OmniBar_AddIcon(self, { spellID = spellID, sourceGUID = sourceGUID, specID = specID })
+			DjuxBar_AddIcon(self, { spellID = spellID, sourceGUID = sourceGUID, specID = specID })
 		end
 	end
 end
@@ -645,18 +645,18 @@ local function IconIsUnit(iconGUID, guid)
 	return iconGUID == guid
 end
 
-local function OmniBar_StartAnimation(self, icon)
+local function DjuxBar_StartAnimation(self, icon)
 	if (not self.settings.glow) then return end
 	icon.flashAnim:Play()
 	icon.newitemglowAnim:Play()
 end
 
-local function OmniBar_StopAnimation(self, icon)
+local function DjuxBar_StopAnimation(self, icon)
 	if icon.flashAnim:IsPlaying() then icon.flashAnim:Stop() end
 	if icon.newitemglowAnim:IsPlaying() then icon.newitemglowAnim:Stop() end
 end
 
-function OmniBar_UpdateBorder(self, icon)
+function DjuxBar_UpdateBorder(self, icon)
 	local border
 	local guid = icon.sourceGUID
 	local name = icon.sourceName
@@ -715,13 +715,13 @@ function OmniBar_UpdateBorder(self, icon)
 		self.settings.unusedAlpha or 1)
 end
 
-function OmniBar_UpdateAllBorders(self)
+function DjuxBar_UpdateAllBorders(self)
 	for i = 1, #self.active do
-		OmniBar_UpdateBorder(self, self.active[i])
+		DjuxBar_UpdateBorder(self, self.active[i])
 	end
 end
 
-function OmniBar_SetZone(self, refresh)
+function DjuxBar_SetZone(self, refresh)
 	local disabled = self.disabled
 	local _, zone = IsInInstance()
 	-- if zone == "none" then
@@ -737,18 +737,18 @@ function OmniBar_SetZone(self, refresh)
 		(zone == "scenario" and (not self.settings.scenario)) or
 		(zone ~= "arena" and zone ~= "pvp" and zone ~= "scenario" and (not self.settings.world))
 
-	self.adaptive = OmniBar_IsAdaptive(self)
+	self.adaptive = DjuxBar_IsAdaptive(self)
 
 	if refresh or disabled ~= self.disabled then
-		OmniBar_LoadPosition(self)
-		OmniBar_ResetIcons(self)
-		OmniBar_UpdateIcons(self)
-		OmniBar_ShowAnchor(self)
+		DjuxBar_LoadPosition(self)
+		DjuxBar_ResetIcons(self)
+		DjuxBar_UpdateIcons(self)
+		DjuxBar_ShowAnchor(self)
 		if zone == "arena" and (not self.disabled) then
 			wipe(self.detected)
 			wipe(self.specs)
 			wipe(self.spellCasts)
-			OmniBar_OnEvent(self, "ARENA_OPPONENT_UPDATE")
+			DjuxBar_OnEvent(self, "ARENA_OPPONENT_UPDATE")
 		end
 	end
 
@@ -759,12 +759,12 @@ local UNITNAME_SUMMON_TITLES = {
     UNITNAME_SUMMON_TITLE2,
     UNITNAME_SUMMON_TITLE3,
 }
-local tooltip = CreateFrame("GameTooltip", "OmniBarPetTooltip", nil, "GameTooltipTemplate")
-local tooltipText = OmniBarPetTooltipTextLeft2
+local tooltip = CreateFrame("GameTooltip", "DjuxBarPetTooltip", nil, "GameTooltipTemplate")
+local tooltipText = DjuxBarPetTooltipTextLeft2
 local function UnitOwnerName(guid)
     if (not guid) then return end
     for i = 1, 3 do
-        _G["UNITNAME_SUMMON_TITLE" .. i] = "OmniBar %s"
+        _G["UNITNAME_SUMMON_TITLE" .. i] = "DjuxBar %s"
     end
     tooltip:SetOwner(UIParent, "ANCHOR_NONE")
     tooltip:SetHyperlink("unit:" .. guid)
@@ -773,7 +773,7 @@ local function UnitOwnerName(guid)
         _G["UNITNAME_SUMMON_TITLE" .. i] = UNITNAME_SUMMON_TITLES[i]
     end
     if (not name) then return end
-    local owner = name:match("OmniBar (.+)")
+    local owner = name:match("DjuxBar (.+)")
     if owner then return owner end
 end
 
@@ -796,7 +796,7 @@ local function GetCooldownDuration(cooldown, specID)
 	end
 end
 
-function OmniBar:AddSpellCast(event, sourceGUID, sourceName, sourceFlags, spellID, serverTime, customDuration)
+function DjuxBar:AddSpellCast(event, sourceGUID, sourceName, sourceFlags, spellID, serverTime, customDuration)
 	local isLocal = (not serverTime)
 	serverTime = serverTime or GetServerTime()
 
@@ -853,7 +853,7 @@ function OmniBar:AddSpellCast(event, sourceGUID, sourceName, sourceFlags, spellI
 				self.spellCasts[name][reset] = nil
 			end
 		end
-		self:SendMessage("OmniBar_ResetSpellCast", name, spellID)
+		self:SendMessage("DjuxBar_ResetSpellCast", name, spellID)
 	end
 
 	if (not addon.Cooldowns[spellID]) then return end
@@ -909,17 +909,17 @@ function OmniBar:AddSpellCast(event, sourceGUID, sourceName, sourceFlags, spellI
 		timestamp = now,
 	}
 
-	self:SendMessage("OmniBar_SpellCast", name, spellID)
+	self:SendMessage("DjuxBar_SpellCast", name, spellID)
 end
 
-function OmniBar:AlertGroup(...)
+function DjuxBar:AlertGroup(...)
 	if (not IsInGroup()) or GetNumGroupMembers() > 5 then return end
 	local event, sourceGUID, sourceName, sourceFlags, spellID, serverTime = ...
-	self:SendCommMessage("OmniBarSpell", self:Serialize(...), GetDefaultCommChannel(), nil, "ALERT")
+	self:SendCommMessage("DjuxBarSpell", self:Serialize(...), GetDefaultCommChannel(), nil, "ALERT")
 end
 
 -- Needed to track PvP trinkets and possibly other spells that do not show up in COMBAT_LOG_EVENT_UNFILTERED
-function OmniBar:UNIT_SPELLCAST_SUCCEEDED(event, unit, _, spellID)
+function DjuxBar:UNIT_SPELLCAST_SUCCEEDED(event, unit, _, spellID)
 	if (not addon.Cooldowns[spellID]) then return end
 
 	local sourceFlags = 0
@@ -935,7 +935,7 @@ function OmniBar:UNIT_SPELLCAST_SUCCEEDED(event, unit, _, spellID)
 	self:AddSpellCast(event, UnitGUID(unit), GetUnitName(unit, true), sourceFlags, spellID)
 end
 
-function OmniBar:COMBAT_LOG_EVENT_UNFILTERED()
+function DjuxBar:COMBAT_LOG_EVENT_UNFILTERED()
 	local _, event, _, sourceGUID, sourceName, sourceFlags, _,_,_,_,_, spellID, spellName = CombatLogGetCurrentEventInfo()
 	if (event == "SPELL_CAST_SUCCESS" or event == "SPELL_AURA_APPLIED") then
 		if spellID == 0 and SPELL_ID_BY_NAME then spellID = SPELL_ID_BY_NAME[spellName] end
@@ -943,22 +943,22 @@ function OmniBar:COMBAT_LOG_EVENT_UNFILTERED()
 	end
 end
 
-function OmniBar_Refresh(self)
-	OmniBar_ResetIcons(self)
-	OmniBar_ReplaySpellCasts(self)
+function DjuxBar_Refresh(self)
+	DjuxBar_ResetIcons(self)
+	DjuxBar_ReplaySpellCasts(self)
 end
 
-function OmniBar_OnEvent(self, event, ...)
+function DjuxBar_OnEvent(self, event, ...)
 	if event == "PLAYER_ENTERING_WORLD" then
-		OmniBar_SetZone(self, true)
-		OmniBar_OnEvent(self, "ARENA_PREP_OPPONENT_SPECIALIZATIONS")
+		DjuxBar_SetZone(self, true)
+		DjuxBar_OnEvent(self, "ARENA_PREP_OPPONENT_SPECIALIZATIONS")
 
 	elseif event == "ZONE_CHANGED_NEW_AREA" then
-		OmniBar_SetZone(self, true)
+		DjuxBar_SetZone(self, true)
 
 	elseif event == "UPDATE_BATTLEFIELD_STATUS" then -- IsRatedBattleground() doesn't return valid response until this event
 		if self.disabled or self.zone ~= "pvp" then return end
-		if (not self.rated) and IsRatedBattleground() then OmniBar_SetZone(self) end
+		if (not self.rated) and IsRatedBattleground() then DjuxBar_SetZone(self) end
 
 	elseif event == "UPDATE_BATTLEFIELD_SCORE" then
 		for i = 1, GetNumBattlefieldScores() do
@@ -966,7 +966,7 @@ function OmniBar_OnEvent(self, event, ...)
 			if name and SPEC_ID_BY_NAME[classToken] and SPEC_ID_BY_NAME[classToken][talentSpec] then
 				if (not self.specs[name]) then
 					self.specs[name] = SPEC_ID_BY_NAME[classToken][talentSpec]
-					self:SendMessage("OmniBar_SpecUpdated", name)
+					self:SendMessage("DjuxBar_SpecUpdated", name)
 				end
 			end
 		end
@@ -981,7 +981,7 @@ function OmniBar_OnEvent(self, event, ...)
 					local _,_,_,_,_, class = GetSpecializationInfoByID(specID)
 					if class then
 						self.detected[i] = class
-						OmniBar_AddIconsByClass(self, class, i, specID)
+						DjuxBar_AddIconsByClass(self, class, i, specID)
 					end
 				end
 			end
@@ -992,7 +992,7 @@ function OmniBar_OnEvent(self, event, ...)
 
 		-- we get the info from ARENA_PREP_OPPONENT_SPECIALIZATIONS on retail
 		if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-			OmniBar_OnEvent(self, "ARENA_PREP_OPPONENT_SPECIALIZATIONS")
+			DjuxBar_OnEvent(self, "ARENA_PREP_OPPONENT_SPECIALIZATIONS")
 			return
 		end
 
@@ -1001,7 +1001,7 @@ function OmniBar_OnEvent(self, event, ...)
 		if (not unit) or (not UnitIsPlayer(unit)) then return end
 
 		if unit == self.settings.trackUnit then
-			OmniBar_Refresh(self)
+			DjuxBar_Refresh(self)
 			return
 		end
 
@@ -1011,7 +1011,7 @@ function OmniBar_OnEvent(self, event, ...)
 				local i = tonumber(unit:match("%d+$"))
 				if (not self.detected[i]) then
 					self.detected[i] = class
-					OmniBar_AddIconsByClass(self, class, i)
+					DjuxBar_AddIconsByClass(self, class, i)
 				end
 			end
 		end
@@ -1019,12 +1019,12 @@ function OmniBar_OnEvent(self, event, ...)
 	elseif event == "GROUP_ROSTER_UPDATE" then
 		if self.disabled then return end
 		if self.settings.trackUnit == "GROUP" or self.settings.trackUnit:match("^party") then
-			OmniBar_Refresh(self)
+			DjuxBar_Refresh(self)
 		end
 
 	elseif event == "PVP_MATCH_ACTIVE" then
 		if self.zone == "arena" then
-			OmniBar_ResetIcons(self)
+			DjuxBar_ResetIcons(self)
 		end
 
 	elseif event == "PLAYER_TARGET_CHANGED" or event == "PLAYER_FOCUS_CHANGED" or event == "PLAYER_REGEN_DISABLED" then
@@ -1032,11 +1032,11 @@ function OmniBar_OnEvent(self, event, ...)
 
 		local unit = (event == "PLAYER_TARGET_CHANGED" and "target") or (event == "PLAYER_FOCUS_CHANGED" and "focus")
 		if unit and unit:upper() == self.settings.trackUnit then
-			OmniBar_Refresh(self)
+			DjuxBar_Refresh(self)
 		end
 
 		-- update icon borders
-		OmniBar_UpdateAllBorders(self)
+		DjuxBar_UpdateAllBorders(self)
 
 		-- we don't need to add in arena
 		if self.zone == "arena" then return end
@@ -1060,23 +1060,23 @@ function OmniBar_OnEvent(self, event, ...)
 		if class and UnitIsPlayer("target") then
 			if self.detected[guid] then return end
 			self.detected[guid] = class
-			OmniBar_AddIconsByClass(self, class, nil, self.specs[GetUnitName("target", true)])
+			DjuxBar_AddIconsByClass(self, class, nil, self.specs[GetUnitName("target", true)])
 		end
 	end
 end
 
-function OmniBar_LoadSettings(self)
+function DjuxBar_LoadSettings(self)
 
 	-- Set the scale
 	self.container:SetScale(self.settings.size/BASE_ICON_SIZE)
 
-	OmniBar_LoadPosition(self)
-	OmniBar_ResetIcons(self)
-	OmniBar_UpdateIcons(self)
-	OmniBar_Center(self)
+	DjuxBar_LoadPosition(self)
+	DjuxBar_ResetIcons(self)
+	DjuxBar_UpdateIcons(self)
+	DjuxBar_Center(self)
 end
 
-function OmniBar_SavePosition(self, set)
+function DjuxBar_SavePosition(self, set)
 	local point, relativeTo, relativePoint, xOfs, yOfs = self:GetPoint()
 	local frameStrata = self:GetFrameStrata()
 	relativeTo = relativeTo and relativeTo:GetName() or "UIParent"
@@ -1100,15 +1100,15 @@ function OmniBar_SavePosition(self, set)
 	self.settings.position.frameStrata = frameStrata
 end
 
-function OmniBar_ResetPosition(self)
+function DjuxBar_ResetPosition(self)
 	self.settings.position.relativeTo = "UIParent"
 	self.settings.position.relativePoint = "CENTER"
 	self.settings.position.xOfs = 0
 	self.settings.position.yOfs = 0
-	OmniBar_LoadPosition(self)
+	DjuxBar_LoadPosition(self)
 end
 
-function OmniBar_LoadPosition(self)
+function DjuxBar_LoadPosition(self)
 	self:ClearAllPoints()
 	if self.settings.position then
 		local point = self.settings.position.point or "CENTER"
@@ -1116,7 +1116,7 @@ function OmniBar_LoadPosition(self)
 		self.anchor:SetPoint(point, self, point, 0, 0)
 		local relativeTo = self.settings.position.relativeTo or "UIParent"
 		if (not _G[relativeTo]) then
-			OmniBar_ResetPosition(self)
+			DjuxBar_ResetPosition(self)
 			return
 		end
 		local relativePoint = self.settings.position.relativePoint or "CENTER"
@@ -1127,11 +1127,11 @@ function OmniBar_LoadPosition(self)
 		self:SetFrameStrata(self.settings.position.frameStrata)
 	else
 		self:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-		OmniBar_SavePosition(self)
+		DjuxBar_SavePosition(self)
 	end
 end
 
-function OmniBar_IsSpellEnabled(self, spellID)
+function DjuxBar_IsSpellEnabled(self, spellID)
 	if (not spellID) then return end
 
 	if (not self.settings.spells) then return addon.Cooldowns[spellID].default end
@@ -1139,23 +1139,23 @@ function OmniBar_IsSpellEnabled(self, spellID)
 	return self.settings.spells[spellID]
 end
 
-function OmniBar:GetSpellTexture(spellID)
+function DjuxBar:GetSpellTexture(spellID)
 	spellID = tonumber(spellID)
 	return (addon.Cooldowns[spellID] and addon.Cooldowns[spellID].icon) or GetSpellTexture(spellID)
 end
 
-function OmniBar_SpecUpdated(self, event, name)
+function DjuxBar_SpecUpdated(self, event, name)
 	if self.disabled then return end
 	if self.settings.trackUnit == "GROUP" or UnitIsUnit(self.settings.trackUnit, name) then
-		OmniBar_Refresh(self)
+		DjuxBar_Refresh(self)
 	end
 end
 
-function OmniBar:GetSpecs()
+function DjuxBar:GetSpecs()
 	if (not GetSpecializationInfo) then return end
 	if (not self.specs[PLAYER_NAME]) then
 		self.specs[PLAYER_NAME] = GetSpecializationInfo(GetSpecialization())
-		self:SendMessage("OmniBar_SpecUpdated", PLAYER_NAME)
+		self:SendMessage("DjuxBar_SpecUpdated", PLAYER_NAME)
 	end
 	if self.lastInspect and GetTime() - self.lastInspect < 3 then
 		return
@@ -1172,7 +1172,7 @@ function OmniBar:GetSpecs()
 	end
 end
 
-function OmniBar:INSPECT_READY(event, guid)
+function DjuxBar:INSPECT_READY(event, guid)
 	if (not self.inspectUnit) then return end
 	local unit = self.inspectUnit
 	self.inspectUnit = nil
@@ -1183,12 +1183,12 @@ function OmniBar:INSPECT_READY(event, guid)
 		return
 	end
 	self.specs[unit] = GetInspectSpecialization(unit)
-	self:SendMessage("OmniBar_SpecUpdated", unit)
+	self:SendMessage("DjuxBar_SpecUpdated", unit)
 	ClearInspectPlayer()
 	self:GetSpecs()
 end
 
-function OmniBar_IsUnitEnabled(self, info)
+function DjuxBar_IsUnitEnabled(self, info)
 	if (not info.timestamp) then return true end
 	if info.test then return true end
 
@@ -1236,7 +1236,7 @@ function OmniBar_IsUnitEnabled(self, info)
 	end
 end
 
-function OmniBar_Center(self)
+function DjuxBar_Center(self)
 	local parentWidth = UIParent:GetWidth()
 	local clamp = self.settings.center and (1 - parentWidth)/2 or 0
 	self:SetClampRectInsets(clamp, -clamp, 0, 0)
@@ -1244,7 +1244,7 @@ function OmniBar_Center(self)
 	self.anchor:SetClampRectInsets(clamp, -clamp, 0, 0)
 end
 
-function OmniBar_CooldownFinish(self, force)
+function DjuxBar_CooldownFinish(self, force)
 	local icon = self:GetParent()
 	if icon.cooldown and icon.cooldown:GetCooldownTimes() > 0 and (not force) then return end -- not complete
 	local charges = icon.charges
@@ -1256,17 +1256,17 @@ function OmniBar_CooldownFinish(self, force)
 			icon.Count:SetText(charges)
 			if self.omnicc then
 				self.omnicc:HookScript('OnHide', function()
-					OmniBar_StartCooldown(icon:GetParent():GetParent(), icon, GetTime())
+					DjuxBar_StartCooldown(icon:GetParent():GetParent(), icon, GetTime())
 				end)
 			end
-			OmniBar_StartCooldown(icon:GetParent():GetParent(), icon, GetTime())
+			DjuxBar_StartCooldown(icon:GetParent():GetParent(), icon, GetTime())
 			return
 		end
 	end
 
 	local bar = icon:GetParent():GetParent()
 
-	OmniBar_StopAnimation(self, icon)
+	DjuxBar_StopAnimation(self, icon)
 
 	if (not bar.settings.showUnused) then
 		icon:Hide()
@@ -1278,10 +1278,10 @@ function OmniBar_CooldownFinish(self, force)
 		end
 	end
 	bar:StopMovingOrSizing()
-	OmniBar_Position(bar)
+	DjuxBar_Position(bar)
 end
 
-function OmniBar_ReplaySpellCasts(self)
+function DjuxBar_ReplaySpellCasts(self)
 	if self.disabled then return end
 
 	local now = GetTime()
@@ -1291,13 +1291,13 @@ function OmniBar_ReplaySpellCasts(self)
 			if now >= v.expires then
 				self.spellCasts[name][k] = nil
 			else
-				OmniBar_AddIcon(self, self.spellCasts[name][k])
+				DjuxBar_AddIcon(self, self.spellCasts[name][k])
 			end
 		end
 	end
 end
 
-local function OmniBar_UnitClassAndSpec(self)
+local function DjuxBar_UnitClassAndSpec(self)
 	local unit = self.settings.trackUnit
 	if unit == "ENEMY" or unit == "GROUP" then return end
 	local _, class = UnitClass(unit)
@@ -1305,7 +1305,7 @@ local function OmniBar_UnitClassAndSpec(self)
 	return class, specID
 end
 
-function OmniBar_ResetIcons(self)
+function DjuxBar_ResetIcons(self)
 	-- Hide all the icons
 	for i = 1, self.numIcons do
 		if self.icons[i].MasqueGroup then
@@ -1328,8 +1328,8 @@ function OmniBar_ResetIcons(self)
 		if self.settings.trackUnit == "ENEMY" then
 			if (not self.adaptive) then
 				for spellID,_ in pairs(addon.Cooldowns) do
-					if OmniBar_IsSpellEnabled(self, spellID) then
-						OmniBar_AddIcon(self, { spellID = spellID })
+					if DjuxBar_IsSpellEnabled(self, spellID) then
+						DjuxBar_AddIcon(self, { spellID = spellID })
 					end
 				end
 			end
@@ -1338,30 +1338,30 @@ function OmniBar_ResetIcons(self)
 				local name, _,_,_,_, class = GetRaidRosterInfo(i)
 				local guid = UnitGUID(name)
 				if class and (not UnitIsUnit("player", name)) then
-					OmniBar_AddIconsByClass(self, class, UnitGUID(name), self.specs[name])
+					DjuxBar_AddIconsByClass(self, class, UnitGUID(name), self.specs[name])
 				end
 			end
 		else
-			local class, specID = OmniBar_UnitClassAndSpec(self)
+			local class, specID = DjuxBar_UnitClassAndSpec(self)
 			if class and UnitIsPlayer(self.settings.trackUnit) then
-				OmniBar_AddIconsByClass(self, class, nil, specID)
+				DjuxBar_AddIconsByClass(self, class, nil, specID)
 			end
 		end
 	end
 
-	OmniBar_Position(self)
+	DjuxBar_Position(self)
 end
 
-function OmniBar_StartCooldown(self, icon, start)
+function DjuxBar_StartCooldown(self, icon, start)
 	icon.cooldown:SetCooldown(start, icon.duration)
 	icon.cooldown.finish = start + icon.duration
 	icon.cooldown:SetSwipeColor(0, 0, 0, self.settings.swipeAlpha or 0.65)
 	icon:SetAlpha(1)
 end
 
-function OmniBar_AddIcon(self, info)
-	if (not OmniBar_IsUnitEnabled(self, info)) then return end
-	if (not OmniBar_IsSpellEnabled(self, info.spellID)) then return end
+function DjuxBar_AddIcon(self, info)
+	if (not DjuxBar_IsUnitEnabled(self, info)) then return end
+	if (not DjuxBar_IsSpellEnabled(self, info.spellID)) then return end
 
 	local icon, duplicate
 
@@ -1422,7 +1422,7 @@ function OmniBar_AddIcon(self, info)
 			local charges = icon.charges + 1
 			icon.charges = charges
 			icon.Count:SetText(charges)
-			OmniBar_StartAnimation(self, icon)
+			DjuxBar_StartAnimation(self, icon)
 			return icon
 		end
 	elseif info.charges then
@@ -1440,7 +1440,7 @@ function OmniBar_AddIcon(self, info)
 
 	-- Masque
 	if Masque then
-		icon.MasqueGroup = Masque:Group("OmniBar", info.spellName)
+		icon.MasqueGroup = Masque:Group("DjuxBar", info.spellName)
 		icon.MasqueGroup:AddButton(icon, {
 			FloatingBG = false,
 			Icon = icon.icon,
@@ -1464,14 +1464,14 @@ function OmniBar_AddIcon(self, info)
 	icon:Show()
 
 	if (icon.timestamp) then
-		OmniBar_StartCooldown(self, icon, icon.timestamp)
-		if (GetTime() == icon.timestamp) then OmniBar_StartAnimation(self, icon) end
+		DjuxBar_StartCooldown(self, icon, icon.timestamp)
+		if (GetTime() == icon.timestamp) then DjuxBar_StartAnimation(self, icon) end
 	end
 
 	return icon
 end
 
-function OmniBar_UpdateIcons(self)
+function DjuxBar_UpdateIcons(self)
 	for i = 1, self.numIcons do
 		-- Set show text
 		self.icons[i].cooldown:SetHideCountdownNumbers(not self.settings.cooldownCount and true or false)
@@ -1497,28 +1497,28 @@ function OmniBar_UpdateIcons(self)
 	end
 end
 
-function OmniBar_Test(self)
+function DjuxBar_Test(self)
 	if (not self) then return end
 	self.disabled = nil
-	OmniBar_ResetIcons(self)
+	DjuxBar_ResetIcons(self)
 	if self.settings.spells then
 		for k,v in pairs(self.settings.spells) do
-			OmniBar_AddIcon(self, { spellID = k, test = true })
+			DjuxBar_AddIcon(self, { spellID = k, test = true })
 		end
 	else
 		for k,v in pairs(addon.Cooldowns) do
 			if v.default then
-				OmniBar_AddIcon(self, { spellID = k, test = true })
+				DjuxBar_AddIcon(self, { spellID = k, test = true })
 			end
 		end
 	end
 end
 
-function OmniBar_Position(self)
+function DjuxBar_Position(self)
 	local numActive = #self.active
 	if numActive == 0 then
 		-- Show the anchor if needed
-		OmniBar_ShowAnchor(self)
+		DjuxBar_ShowAnchor(self)
 		return
 	end
 
@@ -1581,18 +1581,18 @@ function OmniBar_Position(self)
 			end
 		end
 	end
-	OmniBar_ShowAnchor(self)
+	DjuxBar_ShowAnchor(self)
 end
 
-function OmniBar:Test()
+function DjuxBar:Test()
 	for key,_ in pairs(self.db.profile.bars) do
-		OmniBar_Test(_G[key])
+		DjuxBar_Test(_G[key])
 	end
 end
 
-SLASH_OmniBar1 = "/ob"
-SLASH_OmniBar2 = "/omnibar"
-SlashCmdList.OmniBar = function()
-	InterfaceOptionsFrame_OpenToCategory("OmniBar")
-	InterfaceOptionsFrame_OpenToCategory("OmniBar")
+SLASH_DjuxBar1 = "/ob"
+SLASH_DjuxBar2 = "/omnibar"
+SlashCmdList.DjuxBar = function()
+	InterfaceOptionsFrame_OpenToCategory("DjuxBar")
+	InterfaceOptionsFrame_OpenToCategory("DjuxBar")
 end

@@ -1,7 +1,7 @@
--- OmniBar Locale
+-- DjuxBar Locale
 -- https://www.curseforge.com/wow/addons/omnibar/localization
 
-local L = LibStub("AceLocale-3.0"):NewLocale("OmniBar", "enUS", true)
+local L = LibStub("AceLocale-3.0"):NewLocale("DjuxBar", "enUS", true)
 
 L["Activate the icons for testing"] = true
 L["Alignment"] = true
@@ -119,12 +119,12 @@ L["Y"] = true
 L["Test All"] = true
 L.UPDATE_AVAILABLE = "There is an update available. Please download the latest release from https://www.curseforge.com/wow/addons/omnibar"
 L["Import"] = true
-L["Import an OmniBar profile"] = true
+L["Import a DjuxBar profile"] = true
 L["Export"] = true
 L["Export this profile"] = true
 L["Import failed (%s)"] = true
 L["Imported (%s)"] = true
-L["Paste a code to import an OmniBar profile."] = true
+L["Paste a code to import a DjuxBar profile."] = true
 L["Invalid version"] = true
 L["Ready to import"] = true
-L["Copy this code to share this OmniBar profile."] = true
+L["Copy this code to share this DjuxBar profile."] = true

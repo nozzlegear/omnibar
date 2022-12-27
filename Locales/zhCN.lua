@@ -1,7 +1,7 @@
--- OmniBar Locale
+-- DjuxBar Locale
 -- https://www.curseforge.com/wow/addons/omnibar/localization
 
-local L = LibStub("AceLocale-3.0"):NewLocale("OmniBar", "zhCN")
+local L = LibStub("AceLocale-3.0"):NewLocale("DjuxBar", "zhCN")
 if not L then return end
 
 L["Activate the icons for testing"] = "激活测试图标"

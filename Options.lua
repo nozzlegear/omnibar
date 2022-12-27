@@ -1,5 +1,5 @@
 
--- OmniBar by Jordon
+-- DjuxBar by Jordon
 
 local addonName, addon = ...
 
@@ -16,12 +16,12 @@ local LOCALIZED_CLASS_NAMES_MALE = LOCALIZED_CLASS_NAMES_MALE
 local LibStub = LibStub
 local MAX_CLASSES = MAX_CLASSES
 local NO = NO
-local OmniBar_CreateIcon = OmniBar_CreateIcon
-local OmniBar_IsSpellEnabled = OmniBar_IsSpellEnabled
-local OmniBar_LoadPosition = OmniBar_LoadPosition
-local OmniBar_OnEvent = OmniBar_OnEvent
-local OmniBar_Position = OmniBar_Position
-local OmniBar_SavePosition = OmniBar_SavePosition
+local DjuxBar_CreateIcon = DjuxBar_CreateIcon
+local DjuxBar_IsSpellEnabled = DjuxBar_IsSpellEnabled
+local DjuxBar_LoadPosition = DjuxBar_LoadPosition
+local DjuxBar_OnEvent = DjuxBar_OnEvent
+local DjuxBar_Position = DjuxBar_Position
+local DjuxBar_SavePosition = DjuxBar_SavePosition
 local SecondsToTime = SecondsToTime
 local Spell = Spell
 local StaticPopupDialogs = StaticPopupDialogs
@@ -34,8 +34,8 @@ local YES = YES
 local format = format
 local nop = nop
 
-local OmniBar = LibStub("AceAddon-3.0"):GetAddon("OmniBar")
-local L = LibStub("AceLocale-3.0"):GetLocale("OmniBar")
+local DjuxBar = LibStub("AceAddon-3.0"):GetAddon("DjuxBar")
+local L = LibStub("AceLocale-3.0"):GetLocale("DjuxBar")
 
 local MAX_ARENA_SIZE = addon.MAX_ARENA_SIZE or 0
 
@@ -63,13 +63,13 @@ local points = {
 	BOTTOMRIGHT = L["Bottom Right"],
 }
 
-local tooltip = CreateFrame("GameTooltip", "OmniBarTooltip", UIParent, "GameTooltipTemplate")
+local tooltip = CreateFrame("GameTooltip", "DjuxBarTooltip", UIParent, "GameTooltipTemplate")
 local function GetSpellTooltipText(spellID)
 	tooltip:SetOwner(UIParent, "ANCHOR_NONE")
 	tooltip:SetSpellByID(spellID)
 	local lines = tooltip:NumLines()
 	if lines < 1 then return end
-	local line = _G["OmniBarTooltipTextLeft"..lines]:GetText()
+	local line = _G["DjuxBarTooltipTextLeft"..lines]:GetText()
 	if not line then return end
 	tooltip:Hide()
 	return line
@@ -78,7 +78,7 @@ end
 local function IsSpellEnabled(info)
 	local spellID = tonumber(info[#info])
 	local key = info[2]
-	return OmniBar_IsSpellEnabled(_G[key], spellID)
+	return DjuxBar_IsSpellEnabled(_G[key], spellID)
 end
 
 StaticPopupDialogs["OMNIBAR_DELETE"] = {
@@ -86,23 +86,23 @@ StaticPopupDialogs["OMNIBAR_DELETE"] = {
 	button1 = YES,
 	button2 = NO,
 	OnAccept = function(self, data)
-		OmniBar:Delete(data)
-		OmniBar:OnEnable()
+		DjuxBar:Delete(data)
+		DjuxBar:OnEnable()
 	end,
 	timeout = 0,
 	whileDead = true,
 }
 
 
-function OmniBar:ToggleLock(button)
+function DjuxBar:ToggleLock(button)
 	self.db.profile.bars[button.arg].locked = not self.db.profile.bars[button.arg].locked
-	OmniBar_Position(_G[button.arg])
+	DjuxBar_Position(_G[button.arg])
 	self.options.args.bars.args[button.arg].args.lock.name = self.db.profile.bars[button.arg].locked and L["Unlock"] or L["Lock"]
 end
 
 local function GetBars(key)
 	local bars = {}
-	for k in pairs(OmniBar.db.profile.bars) do if k ~= key then bars[k] = OmniBar.db.profile.bars[k].name end end
+	for k in pairs(DjuxBar.db.profile.bars) do if k ~= key then bars[k] = DjuxBar.db.profile.bars[k].name end end
 	return bars
 end
 
@@ -115,7 +115,7 @@ local function GetSpells()
 				local key = info[#info-2]
 				local bar = _G[key]
 				bar.settings.spells = {}
-				OmniBar:Refresh(true)
+				DjuxBar:Refresh(true)
 			end,
 			order = 1,
 		},
@@ -126,7 +126,7 @@ local function GetSpells()
 				local key = info[#info-2]
 				local bar = _G[key]
 				bar.settings.spells = nil
-				OmniBar:Refresh(true)
+				DjuxBar:Refresh(true)
 			end,
 			order = 2,
 		},
@@ -144,7 +144,7 @@ local function GetSpells()
 					end
 				end
 
-				OmniBar:Refresh(true)
+				DjuxBar:Refresh(true)
 			end,
 			order = 3,
 		},
@@ -175,7 +175,7 @@ local function GetSpells()
 			if spell.class and spell.class == CLASS_SORT_ORDER_WITH_GENERAL[i] then
 				local spellName = GetSpellInfo(spellID)
 				if spellName then
-					local spellTexture = OmniBar:GetSpellTexture(spellID) or ""
+					local spellTexture = DjuxBar:GetSpellTexture(spellID) or ""
 					if string.len(spellName) > 25 then
 						spellName = string.sub(spellName, 0, 22) .. "..."
 					end
@@ -208,7 +208,7 @@ local function GetSpells()
 	return spells
 end
 
-function OmniBar:AddBarToOptions(key, refresh)
+function DjuxBar:AddBarToOptions(key, refresh)
 	local trackUnits = {
 		ENEMY = "All Enemies",
 		GROUP = "Group Members",
@@ -336,7 +336,7 @@ function OmniBar:AddBarToOptions(key, refresh)
 						set = function(info, state)
 							local option = info[#info]
 							self.db.profile.bars[key][option] = state
-							OmniBar_Position(_G[key])
+							DjuxBar_Position(_G[key])
 						end,
 					},
 					cooldownCount = {
@@ -457,7 +457,7 @@ function OmniBar:AddBarToOptions(key, refresh)
 						set = function(info, state)
 							local option = info[#info]
 							self.db.profile.bars[key][option] = state
-							OmniBar_Position(_G[key])
+							DjuxBar_Position(_G[key])
 						end,
 					},
 					columnsDesc = {
@@ -497,7 +497,7 @@ function OmniBar:AddBarToOptions(key, refresh)
 						set = function(info, state)
 							local option = info[#info]
 							self.db.profile.bars[key][option] = state
-							OmniBar_Position(_G[key])
+							DjuxBar_Position(_G[key])
 						end,
 					},
 					paddingDesc = {
@@ -552,9 +552,9 @@ function OmniBar:AddBarToOptions(key, refresh)
 					local option = info[#info]
 					local set = {}
 					set[option] = state
-					OmniBar_SavePosition(_G[key], set)
-					OmniBar_LoadPosition(_G[key])
-					OmniBar_Position(_G[key])
+					DjuxBar_SavePosition(_G[key], set)
+					DjuxBar_LoadPosition(_G[key])
+					DjuxBar_Position(_G[key])
 				end,
 				args = {
 					reset = {
@@ -562,7 +562,7 @@ function OmniBar:AddBarToOptions(key, refresh)
 						desc = L["Reset the position of the bar"],
 						type = "execute",
 						func = function()
-							OmniBar_SavePosition(_G[key], {
+							DjuxBar_SavePosition(_G[key], {
 								point = "CENTER",
 								relativeTo = "UIParent",
 								relativePoint = "CENTER",
@@ -570,7 +570,7 @@ function OmniBar:AddBarToOptions(key, refresh)
 								yOfs = 0,
 								frameStrata = "MEDIUM",
 							})
-							OmniBar_LoadPosition(_G[key])
+							DjuxBar_LoadPosition(_G[key])
 						end,
 						order = 1,
 					},
@@ -657,7 +657,7 @@ function OmniBar:AddBarToOptions(key, refresh)
 				set = function(info, state)
 					local option = info[#info]
 					self.db.profile.bars[key][option] = state
-					OmniBar_OnEvent(_G[key], "PLAYER_ENTERING_WORLD")
+					DjuxBar_OnEvent(_G[key], "PLAYER_ENTERING_WORLD")
 				end,
 				order = 12,
 				args = {
@@ -697,7 +697,7 @@ function OmniBar:AddBarToOptions(key, refresh)
 					end
 
 					self.db.profile.bars[key].spells[spellID] = state
-					OmniBar_CreateIcon(_G[key])
+					DjuxBar_CreateIcon(_G[key])
 					self:Refresh(true)
 				end,
 			},
@@ -707,7 +707,7 @@ function OmniBar:AddBarToOptions(key, refresh)
 				desc = L["Lock the bar to prevent dragging"],
 				arg = key,
 				func = "ToggleLock",
-				handler = OmniBar,
+				handler = DjuxBar,
 				width = 0.75,
 				order = 1,
 			},
@@ -720,7 +720,7 @@ function OmniBar:AddBarToOptions(key, refresh)
 				func = function(info)
 					local key = info[#info-1]
 					local bar = _G[key]
-					OmniBar_Test(bar)
+					DjuxBar_Test(bar)
 				end,
 			},
 			delete = {
@@ -740,7 +740,7 @@ function OmniBar:AddBarToOptions(key, refresh)
 
 	self.options.args.bars.args[key].args.spells.args.copy = {
 		name = "Copy From: ",
-		desc = "Copies spells from the selected OmniBar",
+		desc = "Copies spells from the selected DjuxBar",
 		type = "select",
 		width = "normal",
 		values = GetBars(key),
@@ -759,7 +759,7 @@ function OmniBar:AddBarToOptions(key, refresh)
 				dst.settings.spells[k] = v
 			end
 
-			OmniBar:Refresh(true)
+			DjuxBar:Refresh(true)
 		end,
 		order = 3,
 	}
@@ -808,7 +808,7 @@ function OmniBar:AddBarToOptions(key, refresh)
 		}
 	end
 
-	if refresh then LibStub("AceConfigRegistry-3.0"):NotifyChange("OmniBar") end
+	if refresh then LibStub("AceConfigRegistry-3.0"):NotifyChange("DjuxBar") end
 end
 
 local specIDs = {
@@ -834,12 +834,12 @@ local customSpellInfo = {
 		func = function(info)
 			local spellId = info[#info-1]
 			spellId = tonumber(spellId)
-			OmniBar.db.global.cooldowns[spellId] = nil
+			DjuxBar.db.global.cooldowns[spellId] = nil
 			addon.Cooldowns[spellId] = nil
-			OmniBar:AddCustomSpells()
+			DjuxBar:AddCustomSpells()
 			info.options.args.customSpells.args[info[#info-1]] = nil
-			OmniBar:OnEnable() -- to refresh the bar spells tab
-			LibStub("AceConfigRegistry-3.0"):NotifyChange("OmniBar")
+			DjuxBar:OnEnable() -- to refresh the bar spells tab
+			LibStub("AceConfigRegistry-3.0"):NotifyChange("DjuxBar")
 		end,
 		order = 2,
 	},
@@ -860,13 +860,13 @@ local customSpellInfo = {
 		set = function(info, state)
 			local spellId = info[#info-1]
 			spellId = tonumber(spellId)
-			OmniBar.db.global.cooldowns[spellId].duration.default = state
-			OmniBar:AddCustomSpells()
+			DjuxBar.db.global.cooldowns[spellId].duration.default = state
+			DjuxBar:AddCustomSpells()
 		end,
 		get = function(info)
 			local spellId = info[#info-1]
 			spellId = tonumber(spellId)
-			return OmniBar.db.global.cooldowns[spellId].duration.default
+			return DjuxBar.db.global.cooldowns[spellId].duration.default
 		end,
 
 	},
@@ -883,16 +883,16 @@ local customSpellInfo = {
 			local spellId = info[#info-1]
 			spellId = tonumber(spellId)
 			if state == 1 then state = nil end
-			OmniBar.db.global.cooldowns[spellId][option] = state
-			OmniBar:AddCustomSpells()
+			DjuxBar.db.global.cooldowns[spellId][option] = state
+			DjuxBar:AddCustomSpells()
 		end,
 		get = function(info)
 			local option = info[#info]
 			local spellId = info[#info-1]
 			spellId = tonumber(spellId)
-			local value = OmniBar.db.global.cooldowns[spellId][option]
+			local value = DjuxBar.db.global.cooldowns[spellId][option]
 			if not value then return 1 end
-			return OmniBar.db.global.cooldowns[spellId][option]
+			return DjuxBar.db.global.cooldowns[spellId][option]
 		end,
 	},
 	class = {
@@ -905,11 +905,11 @@ local customSpellInfo = {
 			local option = info[#info]
 			local spellId = info[#info-1]
 			spellId = tonumber(spellId)
-			OmniBar.db.global.cooldowns[spellId].specID = nil
-			OmniBar.db.global.cooldowns[spellId].duration = { default = OmniBar.db.global.cooldowns[spellId].duration.default }
-			OmniBar.db.global.cooldowns[spellId][option] = state
-			OmniBar:OnEnable() -- to refresh the bar spells tab
-			OmniBar:AddCustomSpells()
+			DjuxBar.db.global.cooldowns[spellId].specID = nil
+			DjuxBar.db.global.cooldowns[spellId].duration = { default = DjuxBar.db.global.cooldowns[spellId].duration.default }
+			DjuxBar.db.global.cooldowns[spellId][option] = state
+			DjuxBar:OnEnable() -- to refresh the bar spells tab
+			DjuxBar:AddCustomSpells()
 		end,
 	},
 	icon = {
@@ -918,14 +918,14 @@ local customSpellInfo = {
 		type = "input",
 		get = function(info)
 			local spellId = info[#info-1]
-			return tostring(OmniBar:GetSpellTexture(spellId))
+			return tostring(DjuxBar:GetSpellTexture(spellId))
 		end,
 		set = function(info, state)
 			local option = info[#info]
 			local spellId = info[#info-1]
-			OmniBar.db.global.cooldowns[tonumber(spellId)][option] = tonumber(state)
-			OmniBar:OnEnable() -- to refresh the bar spells tab
-			OmniBar:AddCustomSpells()
+			DjuxBar.db.global.cooldowns[tonumber(spellId)][option] = tonumber(state)
+			DjuxBar:OnEnable() -- to refresh the bar spells tab
+			DjuxBar:AddCustomSpells()
 		end,
 	},
 }
@@ -937,41 +937,41 @@ local customSpells = {
 		set = function(info, state, data)
 			local spellId = tonumber(state)
 			local name = GetSpellInfo(spellId)
-			if OmniBar.db.global.cooldowns[spellId] then return end
+			if DjuxBar.db.global.cooldowns[spellId] then return end
 			if spellId and name then
-				OmniBar.db.global.cooldowns[spellId] = data or addon.Cooldowns[spellId] or { custom = true, duration = { default = 30 } , class = "GENERAL" }
+				DjuxBar.db.global.cooldowns[spellId] = data or addon.Cooldowns[spellId] or { custom = true, duration = { default = 30 } , class = "GENERAL" }
 
 				local duration
 				-- If it's a child convert it
-				if OmniBar.db.global.cooldowns[spellId].parent then
+				if DjuxBar.db.global.cooldowns[spellId].parent then
 					-- If the child has a custom duration, save it so we can restore it after we copy from parent
-					if OmniBar.db.global.cooldowns[spellId].duration then
-						duration = OmniBar.db.global.cooldowns[spellId].duration
+					if DjuxBar.db.global.cooldowns[spellId].duration then
+						duration = DjuxBar.db.global.cooldowns[spellId].duration
 					end
 
-					OmniBar.db.global.cooldowns[spellId] = OmniBar:CopyCooldown(addon.Cooldowns[OmniBar.db.global.cooldowns[spellId].parent])
+					DjuxBar.db.global.cooldowns[spellId] = DjuxBar:CopyCooldown(addon.Cooldowns[DjuxBar.db.global.cooldowns[spellId].parent])
 
 					-- Restore child's duration
 					if duration then
-						OmniBar.db.global.cooldowns[spellId].duration = duration
+						DjuxBar.db.global.cooldowns[spellId].duration = duration
 					end
 				end
 
 				-- convert duration to array
-				if type(OmniBar.db.global.cooldowns[spellId].duration) == "number" then
-					OmniBar.db.global.cooldowns[spellId].duration = { default = OmniBar.db.global.cooldowns[spellId].duration }
+				if type(DjuxBar.db.global.cooldowns[spellId].duration) == "number" then
+					DjuxBar.db.global.cooldowns[spellId].duration = { default = DjuxBar.db.global.cooldowns[spellId].duration }
 				end
-				OmniBar:AddCustomSpells()
+				DjuxBar:AddCustomSpells()
 
-				OmniBar.options.args.customSpells.args[tostring(spellId)] = {
+				DjuxBar.options.args.customSpells.args[tostring(spellId)] = {
 					name = name,
 					type = "group",
 					childGroups = "tab",
 					args = customSpellInfo,
-					icon = OmniBar:GetSpellTexture(spellId),
+					icon = DjuxBar:GetSpellTexture(spellId),
 				}
-				OmniBar:OnEnable() -- to refresh the bar spells tab
-				LibStub("AceConfigRegistry-3.0"):NotifyChange("OmniBar")
+				DjuxBar:OnEnable() -- to refresh the bar spells tab
+				LibStub("AceConfigRegistry-3.0"):NotifyChange("DjuxBar")
 			end
 		end,
 	},
@@ -989,7 +989,7 @@ if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
 				local specID = info[#info]:gsub("spec", "")
 				specID = tonumber(specID)
 				if not specID then return end
-				if OmniBar.db.global.cooldowns[spellId].class ~= select(6, GetSpecializationInfoByID(specID)) then return true end
+				if DjuxBar.db.global.cooldowns[spellId].class ~= select(6, GetSpecializationInfoByID(specID)) then return true end
 			end,
 			desc = "",
 			type = "group",
@@ -1005,9 +1005,9 @@ if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
 						spellId = tonumber(spellId)
 						local specID = info[#info-1]:gsub("spec", "")
 						specID = tonumber(specID)
-						if not OmniBar.db.global.cooldowns[spellId].specID then return true end
-						for i = 1, #OmniBar.db.global.cooldowns[spellId].specID do
-							if OmniBar.db.global.cooldowns[spellId].specID[i] == specID then return true end
+						if not DjuxBar.db.global.cooldowns[spellId].specID then return true end
+						for i = 1, #DjuxBar.db.global.cooldowns[spellId].specID do
+							if DjuxBar.db.global.cooldowns[spellId].specID[i] == specID then return true end
 						end
 						return false
 					end,
@@ -1019,29 +1019,29 @@ if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
 						specID = tonumber(specID)
 
 						-- check all specs first
-						if not OmniBar.db.global.cooldowns[spellId].specID then
-							OmniBar.db.global.cooldowns[spellId].specID = {}
+						if not DjuxBar.db.global.cooldowns[spellId].specID then
+							DjuxBar.db.global.cooldowns[spellId].specID = {}
 							for i = 1, #specIDs do
-								if OmniBar.db.global.cooldowns[spellId].class == select(6, GetSpecializationInfoByID(specIDs[i])) then
-									table.insert(OmniBar.db.global.cooldowns[spellId].specID, specIDs[i])
+								if DjuxBar.db.global.cooldowns[spellId].class == select(6, GetSpecializationInfoByID(specIDs[i])) then
+									table.insert(DjuxBar.db.global.cooldowns[spellId].specID, specIDs[i])
 								end
 							end
 						end
 
 						-- then remove if we unchecked
-						for i = #OmniBar.db.global.cooldowns[spellId].specID, 1, -1 do
-							if not state and OmniBar.db.global.cooldowns[spellId].specID[i] == specID then
-								table.remove(OmniBar.db.global.cooldowns[spellId].specID, i)
+						for i = #DjuxBar.db.global.cooldowns[spellId].specID, 1, -1 do
+							if not state and DjuxBar.db.global.cooldowns[spellId].specID[i] == specID then
+								table.remove(DjuxBar.db.global.cooldowns[spellId].specID, i)
 								break
 							end
 						end
 
 						-- add if we checked it
 						if state then
-							table.insert(OmniBar.db.global.cooldowns[spellId].specID, specID)
+							table.insert(DjuxBar.db.global.cooldowns[spellId].specID, specID)
 						end
 
-						OmniBar:AddCustomSpells()
+						DjuxBar:AddCustomSpells()
 					end,
 
 				},
@@ -1059,11 +1059,11 @@ if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
 						spellId = tonumber(spellId)
 						local specID = info[#info-1]:gsub("spec", "")
 						specID = tonumber(specID)
-						if state == OmniBar.db.global.cooldowns[spellId].duration.default then
+						if state == DjuxBar.db.global.cooldowns[spellId].duration.default then
 							state = nil
 						end
-						OmniBar.db.global.cooldowns[spellId].duration[specID] = state
-						OmniBar:AddCustomSpells()
+						DjuxBar.db.global.cooldowns[spellId].duration[specID] = state
+						DjuxBar:AddCustomSpells()
 					end,
 					get = function(info)
 						local option = info[#info]
@@ -1071,7 +1071,7 @@ if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
 						spellId = tonumber(spellId)
 						local specID = info[#info-1]:gsub("spec", "")
 						specID = tonumber(specID)
-						return OmniBar.db.global.cooldowns[spellId].duration[specID] or OmniBar.db.global.cooldowns[spellId].duration.default
+						return DjuxBar.db.global.cooldowns[spellId].duration[specID] or DjuxBar.db.global.cooldowns[spellId].duration.default
 					end,
 				},
 			},
@@ -1079,20 +1079,20 @@ if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
 	end
 end
 
-function OmniBar:SetupOptions()
+function DjuxBar:SetupOptions()
 
-	for spellId, spell in pairs(OmniBar.db.global.cooldowns) do
+	for spellId, spell in pairs(DjuxBar.db.global.cooldowns) do
 		customSpells[tostring(spellId)] = {
 			name = GetSpellInfo(spellId),
 			type = "group",
 			childGroups = "tab",
 			args = customSpellInfo,
-			icon = function() return OmniBar:GetSpellTexture(spellId) end,
+			icon = function() return DjuxBar:GetSpellTexture(spellId) end,
 		}
 	end
 
 	self.options = {
-		name = "OmniBar",
+		name = "DjuxBar",
 		descStyle = "inline",
 		type = "group",
 		plugins = {
@@ -1124,7 +1124,7 @@ function OmniBar:SetupOptions()
 						desc = L["Create a new bar"],
 						order = 1,
 						func = "Create",
-						handler = OmniBar,
+						handler = DjuxBar,
 						width = 0.7,
 					},
 					test = {
@@ -1133,16 +1133,16 @@ function OmniBar:SetupOptions()
 						desc = L["Activate the icons for testing"],
 						order = 2,
 						func = "Test",
-						handler = OmniBar,
+						handler = DjuxBar,
 						width = 0.7,
 					},
 					import = {
 						type = "execute",
 						name = L["Import"],
-						desc = L["Import an OmniBar profile"],
+						desc = L["Import a DjuxBar profile"],
 						order = 3,
 						func = "ShowImport",
-						handler = OmniBar,
+						handler = DjuxBar,
 						width = 0.7,
 					},
 					export = {
@@ -1151,7 +1151,7 @@ function OmniBar:SetupOptions()
 						desc = L["Export this profile"],
 						order = 4,
 						func = "ShowExport",
-						handler = OmniBar,
+						handler = DjuxBar,
 						width = 0.7,
 					},
 				},
@@ -1165,7 +1165,7 @@ function OmniBar:SetupOptions()
 					local option = info[#info]
 					local spellId = info[#info-1]
 					spellId = tonumber(spellId)
-					OmniBar.db.global.cooldowns[spellId][option] = state
+					DjuxBar.db.global.cooldowns[spellId][option] = state
 					self:AddCustomSpells()
 				end,
 				get = function(info)
@@ -1173,7 +1173,7 @@ function OmniBar:SetupOptions()
 					local spellId = info[#info-1]
 					spellId = tonumber(spellId)
 					if not spellId then return end
-					return OmniBar.db.global.cooldowns[spellId][option]
+					return DjuxBar.db.global.cooldowns[spellId][option]
 				end,
 			},
 		},
@@ -1181,12 +1181,12 @@ function OmniBar:SetupOptions()
 
 	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
 		local LibDualSpec = LibStub('LibDualSpec-1.0')
-		LibDualSpec:EnhanceDatabase(self.db, "OmniBarDB")
+		LibDualSpec:EnhanceDatabase(self.db, "DjuxBarDB")
 		LibDualSpec:EnhanceOptions(self.options.plugins.profiles.profiles, self.db)
 	end
 
-	LibStub("AceConfig-3.0"):RegisterOptionsTable("OmniBar", self.options)
-	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("OmniBar", "OmniBar")
+	LibStub("AceConfig-3.0"):RegisterOptionsTable("DjuxBar", self.options)
+	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("DjuxBar", "DjuxBar")
 end
 
 local AceGUI = LibStub("AceGUI-3.0")
@@ -1198,7 +1198,7 @@ export:EnableResize(false)
 export:SetStatusText("")
 export:SetLayout("Flow")
 export:SetTitle(L["Export"])
-export:SetStatusText(L["Copy this code to share this OmniBar profile."])
+export:SetStatusText(L["Copy this code to share this DjuxBar profile."])
 export:Hide()
 local exportEditBox = AceGUI:Create("MultiLineEditBox")
 exportEditBox:SetLabel("")
@@ -1210,7 +1210,7 @@ exportEditBox.button:Hide()
 exportEditBox.frame:SetClipsChildren(true)
 export:AddChild(exportEditBox)
 export.editBox = exportEditBox
-OmniBar.export = export
+DjuxBar.export = export
 
 -- Import
 local import = AceGUI:Create("Frame")
@@ -1236,16 +1236,16 @@ importButton:SetText(L["Import"])
 importButton:SetCallback("OnClick", function()
     local data = import.data
     if (not data) then return end
-    if OmniBar:ImportProfile(data) then import:Hide() end
+    if DjuxBar:ImportProfile(data) then import:Hide() end
 end)
 import:AddChild(importButton)
 import.button = importButton
 importEditBox:SetCallback("OnTextChanged", function(widget)
-    local data = OmniBar:Decode(widget:GetText())
+    local data = DjuxBar:Decode(widget:GetText())
     if (not data) then return end
     import.statustext:SetTextColor(0,1,0)
     import:SetStatusText(L["Ready to import"])
     importButton:SetDisabled(false)
     import.data = data
 end)
-OmniBar.import = import
+DjuxBar.import = import

@@ -1,8 +1,9 @@
 ## Interface: 100000
-## Title: OmniBar
+## Title: DjuxBar
 ## Notes: Tracks enemy cooldowns
 ## Version: @project-version@
-## Author: Jordon
+## Author: Djux
+## OriginalAuthor: Jordon
 ## SavedVariables: OmniBarDB
 ## X-Curse-Project-ID: 85814
 ## X-Wago-ID: BO678XK3

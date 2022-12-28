@@ -2,7 +2,7 @@
 ## Title: DjuxBar
 ## Notes: Tracks enemy cooldowns
 ## Version: @project-version@
-## Author: Djux
+## Author: Nozzlegear
 ## OriginalAuthor: Jordon
 ## SavedVariables: OmniBarDB
 ## X-Wago-ID: J96EwWGg

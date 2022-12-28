@@ -5,9 +5,7 @@
 ## Author: Djux
 ## OriginalAuthor: Jordon
 ## SavedVariables: OmniBarDB
-## X-Curse-Project-ID: 85814
-## X-Wago-ID: BO678XK3
-## X-WoWI-ID: 23235
+## X-Wago-ID: J96EwWGg
 
 #@no-lib-strip@
 Libs\LibStub\LibStub.lua

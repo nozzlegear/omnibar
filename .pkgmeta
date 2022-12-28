@@ -1,4 +1,4 @@
-package-as: OmniBar
+package-as: DjuxBar
 
 externals:
   Libs/LibStub:

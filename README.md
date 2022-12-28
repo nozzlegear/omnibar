@@ -10,6 +10,13 @@ I plan to maintain this fork for as long as the author of the original OmniBar r
 
 [Submit a pull request](https://github.com/nozzlegear/omnibar/pulls)
 
+## Migrating from OmniBar
+
+If you're coming from the original OmniBar, there are two different methods for migrating to DjuxBar:
+
+1. Use OmniBar's export method to export a string, and then import that string into DjuxBar.
+2. Copy OmniBar's variable files named _OmniBar.lua_ and _OmniBar.lua.bak_ in your _WTF/Account/{AccountName}/SavedVariables_ folder and rename them to _DjuxBar.lua_ and _DjuxBar.lua.bak_.
+
 ## Features
 DjuxBar is easily customizable, and has a rich feature set.
 

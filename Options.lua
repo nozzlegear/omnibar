@@ -1,5 +1,6 @@
 
--- OmniBar by Jordon
+-- DjuxBar by Nozzlegear
+-- Original source: OmniBar by Jordon (https://github.com/jordonwow/omnibar)
 
 local addonName, addon = ...
 
@@ -1100,16 +1101,22 @@ function OmniBar:SetupOptions()
 		},
 		childGroups = "tab",
 		args = {
-			vers = {
+			desc = {
 				order = 1,
 				type = "description",
-				name = "|cffffd700"..L["Version"].."|r "..self.version.string.."\n",
+				name = "|cffffd700"..L["Author"].."|r Nozzlegear (https://github.com/nozzlegear)\n\n",
 				cmdHidden = true
 			},
-			desc = {
+            thing = {
 				order = 2,
 				type = "description",
-				name = "|cffffd700 "..L["Author"].."|r Jordon\n",
+				name = "|cffffd700"..L["Credit"].."|r Based on work by Jordon (https://github.com/jordonwow)\n\n",
+				cmdHidden = true
+            },
+			vers = {
+				order = 3,
+				type = "description",
+				name = "|cffffd700"..L["Version"].."|r "..self.version.string.."\n",
 				cmdHidden = true
 			},
 			bars = {

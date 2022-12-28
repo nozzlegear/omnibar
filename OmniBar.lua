@@ -1,5 +1,6 @@
 
--- OmniBar by Jordon
+-- DjuxBar by Nozzlegear
+-- Original source: OmniBar by Jordon (https://github.com/jordonwow/omnibar)
 
 local addonName, addon = ...
 

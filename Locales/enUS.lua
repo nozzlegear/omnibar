@@ -8,6 +8,7 @@ L["Alignment"] = true
 L["Allow Blizzard and other addons to display countdown text on the icons"] = true
 L["As Enemies Appear"] = true
 L["Author"] = true
+L["Credit"] = true
 L["Background"] = true
 L["Bars"] = true
 L["Bottom Left"] = true

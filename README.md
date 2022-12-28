@@ -1,14 +1,17 @@
-# OmniBar
-OmniBar is an _extremely lightweight_ addon that tracks enemy cooldowns.
+# DjuxBar
 
-![OmniBar](http://i.imgur.com/p9DjSOh.png)
+DjuxBar is a fork of OmniBar which is being maintained for Dragonflight. It's an extremely lightweight addon that tracks enemy cooldowns. All credit for the [original OmniBar addon](https://github.com/jordonwow/omnibar) goes to the wonderful [jordonwow on GitHub](https://github.com/jordonwow).
 
-[Open a ticket to report any issues](https://github.com/jordonwow/omnibar/issues)
+I plan to maintain this fork for as long as the author of the original OmniBar remains inactive. However, please keep in mind that I did not write the original code and need to familiarize myself with it before I can fix bugs quickly or write new features.
 
-[Submit a pull request](https://github.com/jordonwow/omnibar/pulls)
+![DjuxBar](https://i.imgur.com/p9DjSOh.png)
+
+[Open a ticket to report any issues](https://github.com/nozzlegear/omnibar/issues)
+
+[Submit a pull request](https://github.com/nozzlegear/omnibar/pulls)
 
 ## Features
-OmniBar is easily customizable, and has a rich feature set.
+DjuxBar is easily customizable, and has a rich feature set.
 
 ### Customizable Cooldowns
 Open the options panel to easily select which cooldowns you wish to track:
@@ -35,12 +38,12 @@ Allow Blizzard and other addons to display countdown text on the icons.
 A glow animation will be displayed around an icon when it is activated.
 
 ### Visual Tweaks
-You can configure various visual tweaks such as size, border, glow, transparency, columns, and padding. OmniBar also includes Masque support.
+You can configure various visual tweaks such as size, border, glow, transparency, columns, and padding. DjuxBar also includes Masque support.
 
 ### Visibility
-Choose to display OmniBar in arenas, battlegrounds, and world combat.
+Choose to display DjuxBar in arenas, battlegrounds, and world combat.
 
 ## Configuration
 To open the options panel, type `/ob`
 
-![OmniBar Options Panel](http://i.imgur.com/HTIe0h3.png)
+![DjuxBar Options Panel](https://i.imgur.com/HTIe0h3.png)

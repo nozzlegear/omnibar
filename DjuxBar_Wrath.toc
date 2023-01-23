@@ -5,7 +5,6 @@
 ## Author: Nozzlegear
 ## OriginalAuthor: Jordon
 ## SavedVariables: OmniBarDB
-## X-Wago-ID: J96EwWGg
 
 #@no-lib-strip@
 Libs\LibStub\LibStub.lua
